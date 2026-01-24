@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String?
+  balance       Float    @default(0)
+  depositLink   String?
+  referralCode  String   @unique
+  referredBy    String?
+  referralBonusPaid Boolean @default(false)
+  isVerified    Boolean  @default(false)
+  isAdmin       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  deposits      Deposit[]
+  withdrawals   Withdrawal[]
+  taskHistory   TaskHistory[]
+  
+  // Referral relations
+  referrer      User?    @relation("Referrals", fields: [referredBy], references: [id], onDelete: SetNull)
+  referrals     User[]   @relation("Referrals")
+  commissionsReceived ReferralCommission[] @relation("CommissionReceiver")
+  commissionsGenerated ReferralCommission[] @relation("CommissionGenerator")
+}
+
+model ReferralCommission {
+  id          String   @id @default(cuid())
+  receiverId  String
+  generatorId String
+  amount      Float
+  type        String   // "signup_bonus" or "task_commission"
+  description String?
+  createdAt   DateTime @default(now())
+  
+  receiver    User     @relation("CommissionReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  generator   User     @relation("CommissionGenerator", fields: [generatorId], references: [id], onDelete: Cascade)
+}
+
+model Deposit {
+  id            String   @id @default(cuid())
+  userId        String
+  amount        Float
+  transactionId String
+  screenshot    String
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Withdrawal {
+  id              String   @id @default(cuid())
+  userId          String
+  amount          Float
+  userDepositLink String
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  reward      Float
+  type        String
+  icon        String   @default("💰")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  history     TaskHistory[]
+}
+
+model TaskHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  taskId      String
+  earned      Float
+  completedAt DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model OTP {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  type      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
