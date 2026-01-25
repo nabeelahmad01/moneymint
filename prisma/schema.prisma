@@ -25,6 +25,9 @@ model User {
   withdrawals   Withdrawal[]
   purchases     PackagePurchase[]
   dailyEarnings DailyEarning[]
+  taskHistory   TaskHistory[]
+  commissionsReceived ReferralCommission[] @relation("CommissionReceiver")
+  commissionsGenerated ReferralCommission[] @relation("CommissionGenerator")
 }
 
 model Deposit {
@@ -96,6 +99,45 @@ model DailyEarning {
   
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   purchase        PackagePurchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  reward      Float
+  url         String?
+  icon        String        @default("📋")
+  type        String        @default("daily") // daily, one_time
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  history     TaskHistory[]
+}
+
+model TaskHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  taskId      String
+  earned      Float
+  completedAt DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model ReferralCommission {
+  id          String   @id @default(cuid())
+  receiverId  String
+  generatorId String
+  amount      Float
+  type        String
+  description String
+  createdAt   DateTime @default(now())
+
+  receiver    User     @relation("CommissionReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  generator   User     @relation("CommissionGenerator", fields: [generatorId], references: [id], onDelete: Cascade)
 }
 
 model OTP {
