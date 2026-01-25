@@ -29,19 +29,28 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'This package is no longer active' }, { status: 400 });
         }
 
-        // Check if already claimed today
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // Get UTC start of today
+        const now = new Date();
+        const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
 
+        // Start checking from beginning of today in UTC
         const todayEarning = await prisma.dailyEarning.findFirst({
             where: {
                 purchaseId,
-                claimedAt: { gte: today }
+                claimedAt: { gte: startOfDay }
             }
         });
 
         if (todayEarning) {
-            return NextResponse.json({ error: 'Already claimed today. Come back tomorrow!' }, { status: 400 });
+            // Calculate time until next claim (midnight UTC)
+            const tomorrow = new Date(startOfDay);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const timeLeft = tomorrow.getTime() - now.getTime();
+            const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+
+            return NextResponse.json({
+                error: `Already claimed today. Come back in ${hoursLeft} hours.`
+            }, { status: 400 });
         }
 
         // Check if all days completed
