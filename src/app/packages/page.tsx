@@ -181,9 +181,9 @@ export default function PackagesPage() {
                                 <button
                                     onClick={() => purchasePackage(pkg.id, pkg.price)}
                                     className="btn btn-primary"
-                                    disabled={purchasing === pkg.id || (user && user.balance < pkg.price)}
+                                    disabled={purchasing === pkg.id || ((user?.balance ?? 0) < pkg.price)}
                                 >
-                                    {purchasing === pkg.id ? '...' : user && user.balance < pkg.price ? 'Need Deposit' : 'Buy Now'}
+                                    {purchasing === pkg.id ? '...' : (user?.balance ?? 0) < pkg.price ? 'Need Deposit' : 'Buy Now'}
                                 </button>
                             </div>
                         </div>
