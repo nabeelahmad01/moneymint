@@ -116,6 +116,10 @@ label {
   margin-top: 2rem;
 }
 
+.pb-24 {
+  padding-bottom: 100px !important;
+}
+
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;

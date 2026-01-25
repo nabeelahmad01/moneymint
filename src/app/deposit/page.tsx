@@ -25,8 +25,9 @@ export default function DepositPage() {
     const [screenshot, setScreenshot] = useState<File | null>(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [copied, setCopied] = useState(false);
 
-    const adminDepositLink = process.env.NEXT_PUBLIC_ADMIN_DEPOSIT_LINK || 'https://binance.com/deposit';
+    const walletAddress = process.env.NEXT_PUBLIC_ADMIN_DEPOSIT_LINK || 'TEggMznQqjGrQbfW5nm1gXukMwNfxHEhMg';
 
     useEffect(() => {
         fetchDeposits();
@@ -46,6 +47,12 @@ export default function DepositPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const copyAddress = () => {
+        navigator.clipboard.writeText(walletAddress);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -89,14 +96,14 @@ export default function DepositPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
                 <span className="spinner" style={{ width: '40px', height: '40px' }}></span>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen" style={{ paddingBottom: '100px' }}>
+        <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: '100px' }}>
             {/* Header */}
             <header className="glass sticky top-0 z-50 px-4 py-4">
                 <div className="container flex items-center gap-4">
@@ -106,24 +113,46 @@ export default function DepositPage() {
             </header>
 
             <main className="container py-6 space-y-6">
-                {/* Deposit Instructions */}
+                {/* Wallet Address Card */}
                 <div className="card gradient-bg">
+                    <div className="text-center mb-4">
+                        <span className="text-4xl">💰</span>
+                        <h2 className="font-bold text-lg mt-2">Send USDT (TRC20)</h2>
+                        <p className="text-sm text-gray-400">Only send USDT on Tron network!</p>
+                    </div>
+
+                    <div className="bg-black/30 rounded-xl p-4 mb-4">
+                        <p className="text-xs text-gray-400 mb-2">Wallet Address:</p>
+                        <div className="flex items-center gap-2">
+                            <code className="flex-1 text-sm text-primary break-all font-mono">
+                                {walletAddress}
+                            </code>
+                            <button
+                                onClick={copyAddress}
+                                className="btn btn-secondary py-2 px-3 text-sm"
+                            >
+                                {copied ? '✅' : '📋'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-center">
+                        <p className="text-yellow-400 text-sm font-medium">⚠️ Only USDT TRC20</p>
+                        <p className="text-xs text-gray-400">Sending other coins will result in loss</p>
+                    </div>
+                </div>
+
+                {/* How to Deposit */}
+                <div className="card">
                     <h2 className="font-bold text-lg mb-3">📌 How to Deposit</h2>
                     <ol className="space-y-2 text-gray-300 text-sm">
-                        <li>1. Click the button below to open deposit link</li>
-                        <li>2. Send your desired amount</li>
-                        <li>3. Take a screenshot of the payment</li>
-                        <li>4. Fill the form below with details</li>
-                        <li>5. Wait for admin approval</li>
+                        <li>1. Copy the wallet address above</li>
+                        <li>2. Open your Binance/Trust Wallet app</li>
+                        <li>3. Send USDT (TRC20) to the address</li>
+                        <li>4. Take a screenshot of the payment</li>
+                        <li>5. Fill the form below with Transaction ID</li>
+                        <li>6. Wait for admin approval (usually 5-30 mins)</li>
                     </ol>
-                    <a
-                        href={adminDepositLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-primary w-full mt-4"
-                    >
-                        Open Deposit Link 🔗
-                    </a>
                 </div>
 
                 {/* Deposit Form */}
@@ -158,11 +187,11 @@ export default function DepositPage() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Transaction ID</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Transaction ID (TxID)</label>
                             <input
                                 type="text"
                                 className="input"
-                                placeholder="Enter transaction ID"
+                                placeholder="Paste your transaction ID here"
                                 value={formData.transactionId}
                                 onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}
                                 required
@@ -203,7 +232,7 @@ export default function DepositPage() {
                                 <div key={deposit.id} className="card flex items-center justify-between">
                                     <div>
                                         <p className="font-bold">${deposit.amount.toFixed(2)}</p>
-                                        <p className="text-sm text-gray-400">ID: {deposit.transactionId}</p>
+                                        <p className="text-sm text-gray-400">ID: {deposit.transactionId.slice(0, 12)}...</p>
                                         <p className="text-xs text-gray-500">
                                             {new Date(deposit.createdAt).toLocaleDateString()}
                                         </p>
@@ -221,16 +250,20 @@ export default function DepositPage() {
             {/* Bottom Navigation */}
             <nav className="mobile-nav">
                 <Link href="/dashboard" className="mobile-nav-item">
-                    <span className="nav-icon">??</span>
-                    <span>Home</span>
+                    <span>🏠</span>
+                    Home
                 </Link>
-                <Link href="/tasks" className="mobile-nav-item">
-                    <span className="nav-icon">??</span>
-                    <span>Tasks</span>
+                <Link href="/deposit" className="mobile-nav-item active">
+                    <span>💳</span>
+                    Deposit
+                </Link>
+                <Link href="/withdraw" className="mobile-nav-item">
+                    <span>💸</span>
+                    Withdraw
                 </Link>
                 <Link href="/settings" className="mobile-nav-item">
-                    <span className="nav-icon">??</span>
-                    <span>Profile</span>
+                    <span>⚙️</span>
+                    Settings
                 </Link>
             </nav>
         </div>

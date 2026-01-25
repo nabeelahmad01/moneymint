@@ -23,20 +23,63 @@ export async function GET() {
             });
         }
 
-        // Create default tasks if not exists
-        const tasksExist = await prisma.task.count();
-        if (tasksExist === 0) {
-            await prisma.task.createMany({
-                data: [
-                    { title: 'Watch Video Ad', description: 'Watch a 30 second advertisement', reward: 0.50, type: 'video', icon: '🎬' },
-                    { title: 'Complete Survey', description: 'Answer a short survey (5 questions)', reward: 1.00, type: 'survey', icon: '📋' },
-                    { title: 'Daily Check-in', description: 'Login daily to claim your reward', reward: 0.25, type: 'daily', icon: '📅' },
-                    { title: 'Share on Social', description: 'Share our app on social media', reward: 0.75, type: 'social', icon: '📱' },
-                    { title: 'Invite a Friend', description: 'Invite someone using your referral code', reward: 2.00, type: 'referral', icon: '👥' },
-                    { title: 'App Review', description: 'Rate our app on store', reward: 1.50, type: 'review', icon: '⭐' },
-                ]
-            });
-        }
+        // Delete old packages and create new ones
+        await prisma.investmentPackage.deleteMany({});
+
+        await prisma.investmentPackage.createMany({
+            data: [
+                {
+                    name: 'Starter Plan',
+                    description: 'Perfect for beginners. Low investment, steady returns.',
+                    price: 10,
+                    dailyReturn: 0.25,
+                    totalDays: 30,
+                    totalReturn: 7.50,
+                    icon: '🌱',
+                    color: 'green'
+                },
+                {
+                    name: 'Silver Plan',
+                    description: 'Popular choice. Balanced risk and reward.',
+                    price: 50,
+                    dailyReturn: 1.25,
+                    totalDays: 30,
+                    totalReturn: 37.50,
+                    icon: '🥈',
+                    color: 'gray'
+                },
+                {
+                    name: 'Gold Plan',
+                    description: 'Higher returns for serious investors.',
+                    price: 100,
+                    dailyReturn: 2.75,
+                    totalDays: 30,
+                    totalReturn: 82.50,
+                    icon: '🥇',
+                    color: 'yellow'
+                },
+                {
+                    name: 'VIP Elite',
+                    description: 'Premium package with maximum earning potential.',
+                    price: 500,
+                    dailyReturn: 12.00,
+                    totalDays: 30,
+                    totalReturn: 360,
+                    icon: '👑',
+                    color: 'purple'
+                },
+                {
+                    name: 'Diamond Club',
+                    description: 'Ultimate investment tier. Maximum profitability.',
+                    price: 1000,
+                    dailyReturn: 28.00,
+                    totalDays: 30,
+                    totalReturn: 840,
+                    icon: '💠',
+                    color: 'pink'
+                }
+            ]
+        });
 
         return NextResponse.json({ message: 'Database seeded successfully' });
     } catch (error) {

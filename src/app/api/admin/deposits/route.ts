@@ -40,16 +40,7 @@ export async function PUT(request: NextRequest) {
         const { depositId, status } = await request.json();
 
         const deposit = await prisma.deposit.findUnique({
-            where: { id: depositId },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        referredBy: true,
-                        referralBonusPaid: true
-                    }
-                }
-            }
+            where: { id: depositId }
         });
 
         if (!deposit) {
@@ -69,32 +60,30 @@ export async function PUT(request: NextRequest) {
                 data: { balance: { increment: deposit.amount } }
             });
 
-            // Pay referral bonus on first deposit approval
-            if (!deposit.user.referralBonusPaid && deposit.user.referredBy) {
-                const REFERRAL_BONUS = 2.00; // $2 bonus for direct referral
+            // Check if this is user's first deposit for referral bonus
+            const user = await prisma.user.findUnique({
+                where: { id: deposit.userId },
+                select: { referredBy: true }
+            });
 
-                // Mark bonus as paid
-                await prisma.user.update({
-                    where: { id: deposit.userId },
-                    data: { referralBonusPaid: true }
-                });
-
-                // Give bonus to referrer
-                await prisma.user.update({
-                    where: { id: deposit.user.referredBy },
-                    data: { balance: { increment: REFERRAL_BONUS } }
-                });
-
-                // Record the commission
-                await prisma.referralCommission.create({
-                    data: {
-                        receiverId: deposit.user.referredBy,
-                        generatorId: deposit.userId,
-                        amount: REFERRAL_BONUS,
-                        type: 'signup_bonus',
-                        description: 'Referral signup bonus - first deposit'
+            // Pay $2 referral bonus to referrer on first deposit
+            if (user?.referredBy) {
+                const previousApprovedDeposits = await prisma.deposit.count({
+                    where: {
+                        userId: deposit.userId,
+                        status: 'approved',
+                        id: { not: depositId }
                     }
                 });
+
+                // Only pay bonus if this is the first approved deposit
+                if (previousApprovedDeposits === 0) {
+                    const REFERRAL_BONUS = 2.00;
+                    await prisma.user.update({
+                        where: { id: user.referredBy },
+                        data: { balance: { increment: REFERRAL_BONUS } }
+                    });
+                }
             }
         }
 

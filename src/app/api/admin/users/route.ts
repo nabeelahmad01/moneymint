@@ -25,7 +25,7 @@ export async function GET() {
                     select: {
                         deposits: true,
                         withdrawals: true,
-                        taskHistory: true
+                        purchases: true
                     }
                 }
             }

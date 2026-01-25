@@ -16,7 +16,7 @@ interface User {
     _count: {
         deposits: number;
         withdrawals: number;
-        taskHistory: number;
+        purchases: number;
     };
 }
 
@@ -27,6 +27,7 @@ export default function AdminUsersPage() {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [editData, setEditData] = useState({ balance: '', depositLink: '', name: '' });
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         fetchUsers();
@@ -35,14 +36,20 @@ export default function AdminUsersPage() {
     const fetchUsers = async () => {
         try {
             const res = await fetch('/api/admin/users');
-            if (!res.ok) {
-                router.push('/login');
-                return;
-            }
             const data = await res.json();
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    setError('Access denied. Admin login required.');
+                    return;
+                }
+                throw new Error(data.error);
+            }
+
             setUsers(data.users || []);
-        } catch (error) {
-            console.error('Fetch error:', error);
+        } catch (err) {
+            console.error('Fetch error:', err);
+            setError('Failed to load users');
         } finally {
             setLoading(false);
         }
@@ -75,8 +82,8 @@ export default function AdminUsersPage() {
 
             setSelectedUser(null);
             fetchUsers();
-        } catch (error) {
-            console.error('Update error:', error);
+        } catch (err) {
+            console.error('Update error:', err);
         } finally {
             setSaving(false);
         }
@@ -84,19 +91,29 @@ export default function AdminUsersPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
                 <span className="spinner" style={{ width: '40px', height: '40px' }}></span>
             </div>
         );
     }
 
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0f] gap-4">
+                <p className="text-red-400">{error}</p>
+                <Link href="/login" className="btn btn-primary">Go to Login</Link>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-[#0a0a0f]">
             {/* Header */}
             <header className="glass sticky top-0 z-50 px-4 py-4">
                 <div className="container flex items-center gap-4">
                     <Link href="/admin" className="text-gray-400 hover:text-white">←</Link>
                     <h1 className="text-xl font-bold">👥 Manage Users</h1>
+                    <span className="text-gray-500 text-sm">({users.length} users)</span>
                 </div>
             </header>
 
@@ -108,7 +125,7 @@ export default function AdminUsersPage() {
                                 <tr>
                                     <th>User</th>
                                     <th>Balance</th>
-                                    <th>Tasks</th>
+                                    <th>Packages</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -127,7 +144,7 @@ export default function AdminUsersPage() {
                                             <span className="text-primary font-bold">${user.balance.toFixed(2)}</span>
                                         </td>
                                         <td>
-                                            <span className="text-gray-400">{user._count.taskHistory}</span>
+                                            <span className="text-gray-400">{user._count.purchases}</span>
                                         </td>
                                         <td>
                                             <span className={`badge ${user.isVerified ? 'badge-approved' : 'badge-pending'}`}>

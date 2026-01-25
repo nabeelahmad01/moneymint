@@ -23,6 +23,7 @@ export default function WithdrawPage() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [amount, setAmount] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -64,7 +65,10 @@ export default function WithdrawPage() {
             const res = await fetch('/api/withdrawals', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: parseFloat(amount) }),
+                body: JSON.stringify({
+                    amount: parseFloat(amount),
+                    password
+                }),
             });
 
             const data = await res.json();
@@ -73,8 +77,9 @@ export default function WithdrawPage() {
                 throw new Error(data.error || 'Failed');
             }
 
-            setSuccess('Withdrawal request submitted!');
+            setSuccess(data.message || 'Withdrawal request submitted!');
             setAmount('');
+            setPassword('');
             fetchData();
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Failed');
@@ -85,14 +90,14 @@ export default function WithdrawPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
                 <span className="spinner" style={{ width: '40px', height: '40px' }}></span>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen" style={{ paddingBottom: '100px' }}>
+        <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: '100px' }}>
             {/* Header */}
             <header className="glass sticky top-0 z-50 px-4 py-4">
                 <div className="container flex items-center gap-4">
@@ -108,12 +113,21 @@ export default function WithdrawPage() {
                     <p className="text-4xl font-bold text-primary">${user?.balance.toFixed(2)}</p>
                 </div>
 
-                {/* Deposit Link Warning */}
+                {/* Wallet Address Warning */}
                 {!user?.depositLink && (
                     <div className="card bg-yellow-500/10 border-yellow-500/50">
                         <p className="text-yellow-400 text-sm">
-                            ⚠️ Please set your deposit link in <Link href="/settings" className="underline">Profile</Link> before requesting withdrawal.
+                            ⚠️ Please set your USDT Wallet Address (TRC20) in <Link href="/settings" className="underline">Settings</Link> before requesting withdrawal.
                         </p>
+                    </div>
+                )}
+
+                {/* User's Wallet Address */}
+                {user?.depositLink && (
+                    <div className="card bg-green-500/10 border border-green-500/30">
+                        <p className="text-xs text-gray-400 mb-1">Your Wallet Address:</p>
+                        <p className="text-green-400 font-mono text-sm break-all">{user.depositLink}</p>
+                        <p className="text-xs text-gray-500 mt-1">Admin will send USDT to this address</p>
                     </div>
                 )}
 
@@ -152,12 +166,29 @@ export default function WithdrawPage() {
                             </p>
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                                Confirm Password 🔒
+                            </label>
+                            <input
+                                type="password"
+                                className="input"
+                                placeholder="Enter your account password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Password required to confirm withdrawal
+                            </p>
+                        </div>
+
                         <button
                             type="submit"
                             className="btn btn-primary w-full"
                             disabled={submitting || !user?.depositLink}
                         >
-                            {submitting ? <span className="spinner"></span> : 'Request Withdrawal'}
+                            {submitting ? <span className="spinner"></span> : '🔐 Confirm Withdrawal'}
                         </button>
                     </form>
                 </div>
@@ -192,16 +223,20 @@ export default function WithdrawPage() {
             {/* Bottom Navigation */}
             <nav className="mobile-nav">
                 <Link href="/dashboard" className="mobile-nav-item">
-                    <span className="nav-icon">??</span>
-                    <span>Home</span>
+                    <span>🏠</span>
+                    Home
                 </Link>
-                <Link href="/tasks" className="mobile-nav-item">
-                    <span className="nav-icon">??</span>
-                    <span>Tasks</span>
+                <Link href="/deposit" className="mobile-nav-item">
+                    <span>💳</span>
+                    Deposit
+                </Link>
+                <Link href="/withdraw" className="mobile-nav-item active">
+                    <span>💸</span>
+                    Withdraw
                 </Link>
                 <Link href="/settings" className="mobile-nav-item">
-                    <span className="nav-icon">??</span>
-                    <span>Profile</span>
+                    <span>⚙️</span>
+                    Settings
                 </Link>
             </nav>
         </div>

@@ -177,18 +177,21 @@ export default function ProfilePage() {
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.875rem', color: '#9ca3af', marginBottom: '0.5rem' }}>
-                                    Binance Deposit Link
+                                    Your USDT Wallet Address (TRC20)
                                     {user?.depositLink && <span style={{ color: '#f59e0b', marginLeft: '0.5rem' }}>(Locked)</span>}
                                 </label>
                                 <input
-                                    type="url"
+                                    type="text"
                                     className="input"
-                                    placeholder="Your Binance deposit link"
+                                    placeholder="e.g. TEggMzn...HEhMg"
                                     value={formData.depositLink}
                                     onChange={(e) => setFormData({ ...formData, depositLink: e.target.value })}
                                     disabled={!!user?.depositLink}
-                                    style={{ opacity: user?.depositLink ? 0.6 : 1 }}
+                                    style={{ opacity: user?.depositLink ? 0.6 : 1, fontFamily: 'monospace' }}
                                 />
+                                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                                    Admin will send your withdrawals to this address
+                                </p>
                             </div>
                             <div style={{ display: 'flex', gap: '0.75rem' }}>
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={saving}>
@@ -331,16 +334,20 @@ export default function ProfilePage() {
             {/* Bottom Navigation */}
             <nav className="mobile-nav">
                 <Link href="/dashboard" className="mobile-nav-item">
-                    <span className="nav-icon">🏠</span>
-                    <span>Home</span>
+                    <span>🏠</span>
+                    Home
                 </Link>
-                <Link href="/tasks" className="mobile-nav-item">
-                    <span className="nav-icon">💼</span>
-                    <span>Tasks</span>
+                <Link href="/deposit" className="mobile-nav-item">
+                    <span>💳</span>
+                    Deposit
+                </Link>
+                <Link href="/withdraw" className="mobile-nav-item">
+                    <span>💸</span>
+                    Withdraw
                 </Link>
                 <Link href="/settings" className="mobile-nav-item active">
-                    <span className="nav-icon">👤</span>
-                    <span>Profile</span>
+                    <span>⚙️</span>
+                    Settings
                 </Link>
             </nav>
         </div>

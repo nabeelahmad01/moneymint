@@ -16,7 +16,6 @@ model User {
   depositLink   String?
   referralCode  String   @unique
   referredBy    String?
-  referralBonusPaid Boolean @default(false)
   isVerified    Boolean  @default(false)
   isAdmin       Boolean  @default(false)
   createdAt     DateTime @default(now())
@@ -24,26 +23,8 @@ model User {
   
   deposits      Deposit[]
   withdrawals   Withdrawal[]
-  taskHistory   TaskHistory[]
-  
-  // Referral relations
-  referrer      User?    @relation("Referrals", fields: [referredBy], references: [id], onDelete: SetNull)
-  referrals     User[]   @relation("Referrals")
-  commissionsReceived ReferralCommission[] @relation("CommissionReceiver")
-  commissionsGenerated ReferralCommission[] @relation("CommissionGenerator")
-}
-
-model ReferralCommission {
-  id          String   @id @default(cuid())
-  receiverId  String
-  generatorId String
-  amount      Float
-  type        String   // "signup_bonus" or "task_commission"
-  description String?
-  createdAt   DateTime @default(now())
-  
-  receiver    User     @relation("CommissionReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
-  generator   User     @relation("CommissionGenerator", fields: [generatorId], references: [id], onDelete: Cascade)
+  purchases     PackagePurchase[]
+  dailyEarnings DailyEarning[]
 }
 
 model Deposit {
@@ -71,28 +52,50 @@ model Withdrawal {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Task {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  reward      Float
-  type        String
-  icon        String   @default("💰")
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
+model InvestmentPackage {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  dailyReturn     Float
+  totalDays       Int
+  totalReturn     Float
+  icon            String   @default("💎")
+  color           String   @default("primary")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
   
-  history     TaskHistory[]
+  purchases       PackagePurchase[]
 }
 
-model TaskHistory {
-  id          String   @id @default(cuid())
-  userId      String
-  taskId      String
-  earned      Float
-  completedAt DateTime @default(now())
+model PackagePurchase {
+  id              String   @id @default(cuid())
+  userId          String
+  packageId       String
+  amountPaid      Float
+  dailyReturn     Float
+  totalDays       Int
+  daysCompleted   Int      @default(0)
+  totalEarned     Float    @default(0)
+  status          String   @default("active")
+  purchasedAt     DateTime @default(now())
+  expiresAt       DateTime
   
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package         InvestmentPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  earnings        DailyEarning[]
+}
+
+model DailyEarning {
+  id              String   @id @default(cuid())
+  userId          String
+  purchaseId      String
+  amount          Float
+  day             Int
+  claimedAt       DateTime @default(now())
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purchase        PackagePurchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
 }
 
 model OTP {
