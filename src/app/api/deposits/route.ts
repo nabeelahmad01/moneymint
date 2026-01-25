@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
-import { writeFile } from 'fs/promises';
-import path from 'path';
 
 export async function POST(request: NextRequest) {
     try {
@@ -20,13 +18,15 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
         }
 
-        // Save screenshot
+        // Minimum deposit check
+        if (amount < 30) {
+            return NextResponse.json({ error: 'Minimum deposit is $30' }, { status: 400 });
+        }
+
+        // Convert screenshot to base64 for serverless storage
         const bytes = await screenshot.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        const fileName = `${Date.now()}-${screenshot.name}`;
-        const uploadPath = path.join(process.cwd(), 'public', 'uploads', fileName);
-
-        await writeFile(uploadPath, buffer);
+        const base64Screenshot = `data:${screenshot.type};base64,${buffer.toString('base64')}`;
 
         // Create deposit record
         const deposit = await prisma.deposit.create({
@@ -34,18 +34,19 @@ export async function POST(request: NextRequest) {
                 userId: session.userId,
                 amount,
                 transactionId,
-                screenshot: `/uploads/${fileName}`,
+                screenshot: base64Screenshot,
                 status: 'pending'
             }
         });
 
         return NextResponse.json({
             message: 'Deposit request submitted',
-            deposit
+            deposit: { id: deposit.id, amount: deposit.amount, status: deposit.status }
         });
     } catch (error) {
         console.error('Create deposit error:', error);
-        return NextResponse.json({ error: 'Failed to create deposit' }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ error: 'Failed to create deposit', details: errorMessage }, { status: 500 });
     }
 }
 
