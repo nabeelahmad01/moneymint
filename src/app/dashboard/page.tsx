@@ -147,9 +147,9 @@ export default function DashboardPage() {
             {/* Header */}
             <header className="glass sticky top-0 z-50">
                 <div className="container py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <span className="text-2xl">💰</span>
-                        <span className="font-bold text-lg gradient-text hide-mobile">EarnTask</span>
+                    <div className="flex items-center gap-2">
+                        <img src="/logo.png" alt="MoneyMint" className="w-8 h-8 rounded-full" />
+                        <span className="font-bold text-lg gradient-text hide-mobile">MoneyMint</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="text-right hide-mobile">

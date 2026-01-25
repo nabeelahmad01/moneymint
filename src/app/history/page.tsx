@@ -56,8 +56,9 @@ export default function HistoryPage() {
         <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: '100px' }}>
             {/* Header */}
             <header className="glass sticky top-0 z-50">
-                <div className="container py-4">
-                    <h1 className="text-xl font-bold">📊 Earnings History</h1>
+                <div className="container py-4 flex items-center gap-3">
+                    <img src="/logo.png" alt="MoneyMint" className="w-8 h-8 rounded-full" />
+                    <h1 className="text-xl font-bold">Earnings History</h1>
                 </div>
             </header>
 

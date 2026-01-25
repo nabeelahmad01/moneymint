@@ -114,9 +114,10 @@ export default function PackagesPage() {
             {/* Header */}
             <header className="glass sticky top-0 z-50">
                 <div className="container py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Link href="/dashboard" className="text-gray-400 hover:text-white">←</Link>
-                        <h1 className="text-xl font-bold">💎 Investment Packages</h1>
+                    <div className="flex items-center gap-2">
+                        <Link href="/dashboard" className="text-gray-400 hover:text-white mr-2">←</Link>
+                        <img src="/logo.png" alt="MoneyMint" className="w-8 h-8 rounded-full" />
+                        <h1 className="text-xl font-bold">Investment Packages</h1>
                     </div>
                     <div className="text-right">
                         <p className="text-xs text-gray-400">Balance</p>

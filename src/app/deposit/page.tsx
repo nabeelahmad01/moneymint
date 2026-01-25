@@ -106,9 +106,12 @@ export default function DepositPage() {
         <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: '100px' }}>
             {/* Header */}
             <header className="glass sticky top-0 z-50 px-4 py-4">
-                <div className="container flex items-center gap-4">
-                    <Link href="/dashboard" className="text-gray-400 hover:text-white">←</Link>
-                    <h1 className="text-xl font-bold">💳 Deposit</h1>
+                <div className="container flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Link href="/dashboard" className="text-gray-400 hover:text-white mr-2">←</Link>
+                        <img src="/logo.png" alt="MoneyMint" className="w-8 h-8 rounded-full" />
+                        <h1 className="text-xl font-bold">Deposit</h1>
+                    </div>
                 </div>
             </header>
 
