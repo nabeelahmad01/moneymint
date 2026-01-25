@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "MoneyMint - Complete Tasks & Earn Rewards",
   description: "Complete simple tasks, watch videos, take surveys, and earn real money. Withdraw instantly via Binance.",
   keywords: "earn money, tasks, surveys, rewards, binance, crypto",
-  manifest: "/manifest.json",
+
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -24,6 +24,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import ServiceWorkerRegister from "./ServiceWorkerRegister";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +34,10 @@ export default function RootLayout({
   return (
     <html lang="en">
 
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ServiceWorkerRegister />
+        {children}
+      </body>
     </html>
   );
 }
