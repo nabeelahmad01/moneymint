@@ -33,6 +33,16 @@ export async function POST(request: NextRequest) {
         const now = new Date();
         const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
 
+        // Prevent claiming on the same day as purchase
+        const purchaseDate = new Date(purchase.purchasedAt);
+        const purchaseDayStart = new Date(Date.UTC(purchaseDate.getUTCFullYear(), purchaseDate.getUTCMonth(), purchaseDate.getUTCDate(), 0, 0, 0, 0));
+
+        if (purchaseDayStart.getTime() >= startOfDay.getTime()) {
+            return NextResponse.json({
+                error: 'Returns are available 24 hours after purchase. Please check back tomorrow!'
+            }, { status: 400 });
+        }
+
         // Start checking from beginning of today in UTC
         const todayEarning = await prisma.dailyEarning.findFirst({
             where: {
