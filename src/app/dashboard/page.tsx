@@ -89,12 +89,19 @@ export default function DashboardPage() {
         }
     };
 
-    const cancelPackage = async (purchaseId: string, packageName: string) => {
-        if (!confirm(`Are you sure you want to cancel "${packageName}"? You will stop receiving daily returns.`)) {
-            return;
-        }
+    const [modal, setModal] = useState<{ isOpen: boolean; purchaseId: string; packageName: string } | null>(null);
 
+    const openCancelModal = (purchaseId: string, packageName: string) => {
+        setModal({ isOpen: true, purchaseId, packageName });
+    };
+
+    const confirmCancel = async () => {
+        if (!modal) return;
+
+        const { purchaseId } = modal;
         setClaimLoading(purchaseId);
+        setModal(null);
+
         try {
             const res = await fetch('/api/packages/cancel', {
                 method: 'POST',
@@ -270,7 +277,7 @@ export default function DashboardPage() {
                                             {claimLoading === purchase.id ? '...' : `Claim $${purchase.dailyReturn.toFixed(2)}`}
                                         </button>
                                         <button
-                                            onClick={() => cancelPackage(purchase.id, purchase.package.name)}
+                                            onClick={() => openCancelModal(purchase.id, purchase.package.name)}
                                             className="btn btn-secondary"
                                             disabled={claimLoading === purchase.id}
                                             title="Cancel Package"
@@ -317,6 +324,40 @@ export default function DashboardPage() {
                     Settings
                 </Link>
             </nav>
+
+            {/* Custom Modal */}
+            {modal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setModal(null)}></div>
+                    <div className="card w-full max-w-sm relative z-10 animate-fade-in border-red-500/30">
+                        <div className="text-center">
+                            <div className="text-5xl mb-4">⚠️</div>
+                            <h3 className="text-xl font-bold mb-2">Cancel Package?</h3>
+                            <p className="text-gray-400 mb-6">
+                                Are you sure you want to cancel <span className="text-white font-bold">{modal.packageName}</span>?
+                                <br />
+                                <span className="text-red-400 text-sm block mt-2">
+                                    You will stop receiving daily returns.
+                                </span>
+                            </p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setModal(null)}
+                                    className="btn btn-secondary flex-1"
+                                >
+                                    No, Keep it
+                                </button>
+                                <button
+                                    onClick={confirmCancel}
+                                    className="btn btn-danger flex-1"
+                                >
+                                    Yes, Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Toast */}
             {toast && (
