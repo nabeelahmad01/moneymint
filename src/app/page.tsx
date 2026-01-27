@@ -8,7 +8,7 @@ export default function HomePage() {
         <div className="container flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
             <span className="text-3xl">💰</span>
-            <span className="text-xl font-bold gradient-text">MoneyMint</span>
+            <span className="text-xl font-bold gradient-text">EarnTask</span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-gray-300 hover:text-white px-4 py-2">
@@ -187,11 +187,11 @@ export default function HomePage() {
             <div className="text-6xl mb-6">📱</div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Download Our App</h2>
             <p className="text-gray-400 mb-8">
-              Get the MoneyMint app on your Android device. Invest and earn anytime, anywhere!
+              Get the EarnTask app on your Android device. Invest and earn anytime, anywhere!
             </p>
 
             <a
-              href="/moneymint.apk"
+              href="/earntask.apk"
               download
               className="btn btn-primary text-lg px-8 py-4 inline-flex items-center gap-3"
             >
@@ -251,7 +251,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <span className="text-2xl">💰</span>
-              <span className="font-bold gradient-text">MoneyMint</span>
+              <span className="font-bold gradient-text">EarnTask</span>
             </div>
             <div className="flex gap-6 text-gray-400 text-sm">
               <Link href="/login" className="hover:text-white">Login</Link>
@@ -259,7 +259,7 @@ export default function HomePage() {
               <a href="#packages" className="hover:text-white">Packages</a>
               <a href="#download" className="hover:text-white">Download</a>
             </div>
-            <p className="text-gray-500 text-sm">© 2026 MoneyMint. All rights reserved.</p>
+            <p className="text-gray-500 text-sm">© 2026 EarnTask. All rights reserved.</p>
           </div>
         </div>
       </footer>

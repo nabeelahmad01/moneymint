@@ -68,7 +68,7 @@ export default function ReferralPage() {
         const url = `${window.location.origin}/signup?ref=${data?.referralCode}`;
         if (navigator.share) {
             navigator.share({
-                title: 'Join MoneyMint',
+                title: 'Join EarnTask',
                 text: 'Sign up and earn rewards!',
                 url,
             });
