@@ -146,6 +146,7 @@ export default function ProfilePage() {
                             <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{user?.email}</p>
                             <p style={{ color: '#6b7280', fontSize: '0.75rem' }}>Member since {memberSince}</p>
                         </div>
+
                         <button
                             onClick={() => setShowEditForm(!showEditForm)}
                             style={{
