@@ -4,7 +4,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="container flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
             <span className="text-3xl">💰</span>
