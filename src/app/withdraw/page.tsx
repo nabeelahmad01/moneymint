@@ -61,6 +61,12 @@ export default function WithdrawPage() {
         setError('');
         setSuccess('');
 
+        if (user && parseFloat(amount) > user.balance) {
+            setError('Insufficient balance');
+            setSubmitting(false);
+            return;
+        }
+
         try {
             const res = await fetch('/api/withdrawals', {
                 method: 'POST',

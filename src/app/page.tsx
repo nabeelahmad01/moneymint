@@ -8,7 +8,7 @@ export default function HomePage() {
         <div className="container flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
             <span className="text-3xl">💰</span>
-            <span className="text-xl font-bold gradient-text">EarnTask</span>
+            <span className="text-xl font-bold gradient-text">MoneyMint</span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-gray-300 hover:text-white px-4 py-2">
@@ -251,7 +251,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <span className="text-2xl">💰</span>
-              <span className="font-bold gradient-text">EarnTask</span>
+              <span className="font-bold gradient-text">MoneyMint</span>
             </div>
             <div className="flex gap-6 text-gray-400 text-sm">
               <Link href="/login" className="hover:text-white">Login</Link>

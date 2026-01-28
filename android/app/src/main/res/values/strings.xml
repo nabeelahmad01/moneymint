@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MoneyMint</string>
+    <string name="title_activity_main">MoneyMint</string>
+    <string name="package_name">com.moneymint.app</string>
+    <string name="custom_url_scheme">com.moneymint.app</string>
+</resources>
