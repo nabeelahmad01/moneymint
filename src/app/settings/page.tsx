@@ -143,7 +143,7 @@ export default function ProfilePage() {
                         </div>
                         <div style={{ flex: 1 }}>
                             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.25rem' }}>{user?.name || 'User'}</h2>
-                            <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{user?.email}</p>
+
                             <p style={{ color: '#6b7280', fontSize: '0.75rem' }}>Member since {memberSince}</p>
                         </div>
 

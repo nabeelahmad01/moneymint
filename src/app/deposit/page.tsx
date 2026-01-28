@@ -132,7 +132,7 @@ export default function DepositPage() {
                             </code>
                             <button
                                 onClick={copyAddress}
-                                className="btn btn-secondary py-2 px-3 text-sm"
+                                className="btn btn-secondary py-2 px-3 text-sm shrink-0"
                             >
                                 {copied ? '✅' : '📋'}
                             </button>
