@@ -199,7 +199,7 @@ export default function HomePage() {
             </p>
 
             <a
-              href="/earntask.apk"
+              href="/moneymint.apk"
               download
               className="btn btn-primary text-lg px-8 py-4 inline-flex items-center gap-3"
             >
