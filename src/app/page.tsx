@@ -10,12 +10,20 @@ export default function HomePage() {
             <span className="text-3xl">💰</span>
             <span className="text-xl font-bold gradient-text">MoneyMint</span>
           </div>
-          <div className="flex items-center gap-3">
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-3">
             <Link href="/login" className="text-gray-300 hover:text-white px-4 py-2">
               Login
             </Link>
             <Link href="/signup" className="btn btn-primary py-2 px-4">
               Sign Up
+            </Link>
+          </div>
+
+          {/* Mobile Nav */}
+          <div className="flex md:hidden items-center gap-2">
+            <Link href="/login" className="btn btn-primary text-sm py-1.5 px-4">
+              Login
             </Link>
           </div>
         </div>

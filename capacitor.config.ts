@@ -7,7 +7,14 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://moneymint.vercel.app/',
     androidScheme: 'https'
-  }
+  },
+  plugins: {
+    StatusBar: {
+      style: 'LIGHT',
+      backgroundColor: '#FFFFFF',
+      overlaysWebView: false,
+    },
+  },
 };
 
 export default config;
