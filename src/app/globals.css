@@ -496,3 +496,9 @@ tr:hover {
     padding-bottom: 3rem;
   }
 }
+
+@media (min-width: 48rem) {
+  .md\:pt-52 {
+    padding-top: calc(var(--spacing) * 31) !important;
+  }
+}
