@@ -29,13 +29,7 @@ export async function POST(request: NextRequest) {
             data: { isVerified: true }
         });
 
-        // If user was referred, add bonus to referrer
-        if (user.referredBy) {
-            await prisma.user.update({
-                where: { id: user.referredBy },
-                data: { balance: { increment: 2.00 } } // $2 referral bonus
-            });
-        }
+        // Initial logic removed to prevent immediate bonus. Bonus is now handled in deposit approval.
 
         // Delete used OTP
         await prisma.oTP.deleteMany({
